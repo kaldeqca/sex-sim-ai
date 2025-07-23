@@ -60,7 +60,7 @@ To run this project locally, you will need a Google Gemini API Key.
     - Fill in all the character details and upload an image.
     - Click "Begin" to start the simulation.
 
-📁 **File Structure**
+## 📁 File Structure
 
 ```
 .
