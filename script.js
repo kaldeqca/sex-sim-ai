@@ -224,8 +224,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         retryBtn.addEventListener('click', () => {
-            if (lastUserActionAttempt) {
-                handleInteraction(true); // Pass a flag to indicate it's a retry
+            // Check if we are retrying the initial call.
+            // This is true if history has only the initial user prompt.
+            if (conversationHistory.length === 1) {
+                callGeminiAPI(); // Just call the API again. History is already correct.
+            } else if (lastUserActionAttempt) {
+                handleInteraction(true); // Standard retry for subsequent actions.
             }
         });
 
@@ -296,7 +300,13 @@ document.addEventListener('DOMContentLoaded', () => {
             await updateInteractionUI(parsedResponse);
         } catch (error) {
             console.error("API or Parsing Error:", error);
-            conversationHistory.pop(); // Remove the failed user action
+            // If the history length is greater than 1, it's a subsequent action that failed.
+            // Remove it so we can retry the previous state.
+            // If the length is 1, it's the initial prompt that failed. We leave it in the
+            // history so the retry button can resend it.
+            if (conversationHistory.length > 1) {
+                conversationHistory.pop();
+            }
             responseBox.innerHTML = '';
             responseBox.style.justifyContent = 'flex-start';
             responseBox.textContent = `An error occurred: ${error.message}\n\nYou can edit your action and try again, or press Retry.`;
