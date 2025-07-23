@@ -60,14 +60,17 @@ To run this project locally, you will need a Google Gemini API Key.
     - Fill in all the character details and upload an image.
     - Click "Begin" to start the simulation.
 
-## 📁 File Structure
+📁 **File Structure**
+
+```
 .
-├── index.html # The main HTML structure of the application.
-├── style.css # All CSS styling for both light and dark themes.
-├── script.js # Core application logic, event listeners, and API calls.
-├── config.js # Contains the detailed system prompts for the AI in all supported languages.
-├── lang.json # All UI text strings for internationalization (i18n).
-└── README.md # You are here.
+├── index.html     # The main HTML structure of the application.
+├── style.css      # All CSS styling for both light and dark themes.
+├── script.js      # Core application logic, event listeners, and API calls.
+├── config.js      # Contains the detailed system prompts for the AI in all supported languages.
+├── lang.json      # All UI text strings for internationalization (i18n).
+└── README.md      # You are here.
+```
 
 
 ## ⚖️ Disclaimer
