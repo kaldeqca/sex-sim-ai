@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title data-lang="headerTitle">Sex Simulator v1</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Roboto:wght@300;400&display=swap"
+      rel="stylesheet"
+    />
+    <script
+      src="https://kit.fontawesome.com/a076d05399.js"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- All Controls container for top-left elements -->
+    <div class="top-left-controls">
+      <div id="lang-switcher">
+        <button data-lang-code="en">EN</button>
+        <button data-lang-code="cn">中文</button>
+        <button data-lang-code="ja">日本語</button>
+      </div>
+      <button id="credits-btn" title="Credits">
+        <i class="fas fa-copyright"></i>
+      </button>
+    </div>
+
+    <!-- All controls container for top-right elements -->
+    <div class="top-right-controls">
+      <button id="theme-switcher"><i class="fas fa-moon"></i></button>
+      <div id="color-picker-container">
+        <label for="theme-color-button" data-lang="themeColorLabel"
+          >Theme</label
+        >
+        <div class="color-picker-wrapper">
+          <button id="theme-color-button">
+            <span id="theme-color-preview"></span>
+            <i class="fas fa-caret-down"></i>
+          </button>
+          <div id="color-palette-popup" class="hidden">
+            <div id="color-palette"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <header><h1 data-lang="headerTitle">Sex Simulator v1</h1></header>
+
+      <main id="setup-section">
+        <div class="api-settings">
+          <div class="input-group">
+            <label for="api-key" data-lang="apiKeyLabel">Gemini API Key</label>
+            <input
+              type="password"
+              id="api-key"
+              autocomplete="off"
+              data-lang-placeholder="apiKeyPlaceholder"
+            />
+          </div>
+          <div class="input-group">
+            <label for="model-select" data-lang="modelLabel">Model</label>
+            <select id="model-select"></select>
+          </div>
+        </div>
+        <div id="image-uploader">
+          <p data-lang="imageDropText">Drag & Drop or Paste (Ctrl+V) Image</p>
+        </div>
+        <div class="character-inputs">
+          <div class="input-group">
+            <label for="char-name" data-lang="nameLabel">Name</label>
+            <input
+              type="text"
+              id="char-name"
+              data-lang-placeholder="namePlaceholder"
+            />
+          </div>
+          <div class="input-group">
+            <label for="char-age" data-lang="ageLabel">Age</label>
+            <input type="number" id="char-age" value="18" min="18" />
+          </div>
+          <div class="input-group">
+            <label for="char-gender" data-lang="genderLabel">Gender</label>
+            <select id="char-gender"></select>
+          </div>
+          <!-- 'personality-group' class is fullwidth -->
+          <div class="input-group personality-group">
+            <label for="char-personality" data-lang="personalityLabel"
+              >Personality</label
+            >
+            <div class="input-with-icon">
+              <input
+                type="text"
+                id="char-personality"
+                data-lang-placeholder="personalityPlaceholder"
+              />
+              <button id="personality-dice" class="dice-btn">
+                <i class="fas fa-dice"></i>
+              </button>
+            </div>
+          </div>
+          <div class="input-group scenario-group">
+            <label for="char-scenario" data-lang="scenarioLabel"
+              >Scenario (Optional)</label
+            >
+            <div class="input-with-icon">
+              <textarea
+                id="char-scenario"
+                rows="3"
+                data-lang-placeholder="scenarioPlaceholder"
+              ></textarea>
+              <button id="scenario-dice" class="dice-btn">
+                <i class="fas fa-dice"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <button id="start-btn" data-lang="startButton">Begin</button>
+      </main>
+
+      <section id="interaction-section" class="hidden">
+        <button id="back-to-setup-btn" title="Back to Setup">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+
+        <div id="game-char-display">
+          <h3 data-lang="gameCharacterLabel">Who You Are Fucking Today</h3>
+          <img id="game-char-image" src="" alt="Character Image" />
+        </div>
+
+        <div id="response-container">
+          <div id="response-box"></div>
+          <button id="retry-btn" class="hidden" data-lang="retryButton">
+            Retry
+          </button>
+          <div id="options-container"></div>
+          <div id="custom-input-container">
+            <input
+              type="text"
+              id="custom-option-input"
+              data-lang-placeholder="customOptionPlaceholder"
+            />
+            <button id="submit-custom-option" data-lang="submitButton">
+              Send
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script type="module" src="script.js"></script>
+  </body>
+</html>
