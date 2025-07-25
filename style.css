@@ -235,7 +235,6 @@ input::placeholder, textarea::placeholder { color: var(--placeholder-text); opac
 /* --- Responsive Styles for Mobile & Tablets --- */
 @media screen and (max-width: 850px) {
     body {
-        /* Reduce body padding and align content to the top */
         padding: 1rem;
         align-items: stretch;
         justify-content: flex-start;
@@ -243,16 +242,12 @@ input::placeholder, textarea::placeholder { color: var(--placeholder-text); opac
     }
 
     .container {
-        /* Reduce padding and remove top margin for a tighter fit */
         padding: 1.5rem;
         margin-top: 1rem;
     }
 
-    /* --- Reposition Corner Controls --- */
     .top-left-controls, .top-right-controls {
-        /* Change from 'fixed' to 'static' to place them in the document flow */
         position: static; 
-        /* Arrange items in a row and allow wrapping */
         flex-direction: row;
         flex-wrap: wrap;
         align-items: center;
@@ -260,25 +255,21 @@ input::placeholder, textarea::placeholder { color: var(--placeholder-text); opac
     }
 
     .top-left-controls {
-        /* Center the left controls and add space below */
         justify-content: center;
         margin-bottom: 1rem;
     }
 
     .top-right-controls {
-        /* Center the right controls */
         justify-content: center;
     }
 
     #color-palette-popup {
-        /* Reposition popup to open downwards and to the right */
         top: calc(100% + 10px);
         right: 0;
         left: auto;
         transform: translateY(0);
     }
     
-    /* --- Adjust Typography and Spacing --- */
     header h1 {
         font-size: 2.2rem;
         letter-spacing: 1px;
@@ -290,31 +281,47 @@ input::placeholder, textarea::placeholder { color: var(--placeholder-text); opac
 
     /* --- Adjust Form Elements --- */
     #image-uploader {
-        height: 300px; /* Reduce height for smaller screens */
+        height: 300px;
         margin-top: 1.5rem;
         margin-bottom: 2rem;
     }
 
-    .character-inputs, .api-settings {
-        gap: 1rem; /* Reduce gap between inputs */
+    .api-settings {
+        padding: 1rem;
+        gap: 1.25rem;
+    }
+
+    .character-inputs {
+        gap: 1.25rem;
+        margin-bottom: 2rem;
     }
 
     /* --- Adjust Interaction Section Elements --- */
     #back-to-setup-btn {
-        /* Reposition button to match new container padding */
         top: 1.5rem;
         left: 1.5rem;
     }
 
     #game-char-image {
-        max-height: 40vh; /* Ensure image doesn't take up too much vertical space */
+        max-height: 40vh;
     }
 }
 
 @media screen and (max-width: 480px) {
     .container {
-        padding: 1rem; /* Further reduce padding on very small screens */
+        padding: 1rem;
     }
+
+    /* Force grids to single-column for better flow on small devices */
+    .api-settings, .character-inputs {
+        grid-template-columns: 1fr;
+    }
+
+    /* Give a bit more space for typing scenario on mobile */
+    #char-scenario {
+        height: 80px; /* Use height instead of rows for more consistent sizing */
+    }
+
     #back-to-setup-btn {
         top: 1rem;
         left: 1rem;
@@ -326,7 +333,7 @@ input::placeholder, textarea::placeholder { color: var(--placeholder-text); opac
         font-size: 1.8rem;
     }
     #custom-input-container {
-        flex-direction: column; /* Stack custom input and button vertically */
+        flex-direction: column;
     }
     #submit-custom-option {
         width: 100%;
