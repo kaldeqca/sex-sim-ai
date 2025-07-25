@@ -1,334 +1,329 @@
-/* --- Root Variables & Base Styles --- */
-:root {
-    --primary-bg: #f4f4f9;
-    --secondary-bg: #ffffff;
-    --primary-text: #333;
-    --secondary-text: #666;
-    --placeholder-text: #aaa;
-    --accent-color: #5d3a9b;
-    --accent-hover: #7e57c2;
-    --error-color: #d9534f;
-    --border-color: #ddd;
-    --shadow-color: rgba(0, 0, 0, 0.1);
-    --header-shadow: rgba(0, 0, 0, 0.2);
-}
+import { systemPrompts } from './config.js';
 
-body.dark-mode {
-    --primary-bg: #121212;
-    --secondary-bg: #1e1e1e;
-    --primary-text: #e0e0e0;
-    --secondary-text: #a0a0a0;
-    --placeholder-text: #666;
-    --error-color: #e57373;
-    --border-color: #444;
-    --shadow-color: rgba(255, 255, 255, 0.05);
-    --header-shadow: rgba(0, 0, 0, 0.5);
-}
+document.addEventListener('DOMContentLoaded', () => {
+    // --- State and Data ---
+    let langData = {};
+    let lastSuccessfulOptions = [];
+    let conversationHistory = [];
+    let isWaitingForResponse = false;
+    let characterImage = null;
+    let lastUserActionAttempt = '';
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+    // --- Element Selectors ---
+    const themeSwitcher = document.getElementById('theme-switcher');
+    const langSwitcher = document.getElementById('lang-switcher');
+    const creditsBtn = document.getElementById('credits-btn');
+    const colorPickerWrapper = document.querySelector('.color-picker-wrapper');
+    const themeColorButton = document.getElementById('theme-color-button');
+    const themeColorPreview = document.getElementById('theme-color-preview');
+    const colorPalettePopup = document.getElementById('color-palette-popup');
+    const colorPalette = document.getElementById('color-palette');
+    const apiKeyInput = document.getElementById('api-key');
+    const modelSelect = document.getElementById('model-select');
+    const imageUploader = document.getElementById('image-uploader');
+    const imageUploaderText = imageUploader.querySelector('p');
+    const charNameInput = document.getElementById('char-name');
+    const charAgeInput = document.getElementById('char-age');
+    const genderSelect = document.getElementById('char-gender');
+    const personalityInput = document.getElementById('char-personality');
+    const personalityDice = document.getElementById('personality-dice');
+    const scenarioInput = document.getElementById('char-scenario');
+    const scenarioDice = document.getElementById('scenario-dice');
+    const startBtn = document.getElementById('start-btn');
+    const setupSection = document.getElementById('setup-section');
+    const interactionSection = document.getElementById('interaction-section');
+    const responseBox = document.getElementById('response-box');
+    const optionsContainer = document.getElementById('options-container');
+    const customOptionInput = document.getElementById('custom-option-input');
+    const submitCustomOption = document.getElementById('submit-custom-option');
+    const backToSetupBtn = document.getElementById('back-to-setup-btn');
+    const retryBtn = document.getElementById('retry-btn');
+    const gameCharDisplay = document.getElementById('game-char-display');
+    const gameCharImage = document.getElementById('game-char-image');
 
-body {
-    font-family: 'Roboto', sans-serif;
-    background-color: var(--primary-bg);
-    color: var(--primary-text);
-    line-height: 1.6;
-    transition: background-color 0.3s, color 0.3s;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 2rem;
-    min-height: 100vh;
-}
-
-.container {
-    width: 100%;
-    max-width: 800px;
-    background-color: var(--secondary-bg);
-    border-radius: 12px;
-    box-shadow: 0 4px 20px var(--shadow-color);
-    padding: 2.5rem;
-    transition: background-color 0.3s;
-    position: relative; /* Added for back button positioning */
-}
-
-.hidden { display: none !important; }
-
-/* --- NEW: Top Left Controls --- */
-.top-left-controls {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
-    z-index: 1001;
-}
-
-/* --- Language Switcher --- */
-#lang-switcher {
-    display: flex;
-    gap: 5px;
-    background-color: var(--secondary-bg);
-    padding: 5px;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    box-shadow: 0 2px 5px var(--shadow-color);
-}
-#lang-switcher button { background: none; border: none; color: var(--secondary-text); padding: 5px 10px; cursor: pointer; border-radius: 5px; font-weight: bold; transition: background-color 0.2s, color 0.2s; }
-#lang-switcher button:hover { background-color: var(--primary-bg); color: var(--primary-text); }
-#lang-switcher button.active { background-color: var(--accent-color); color: white; }
-
-/* --- Credits Button --- */
-#credits-btn {
-    background: var(--secondary-bg);
-    border: 1px solid var(--border-color);
-    color: var(--primary-text);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: all 0.3s;
-    box-shadow: 0 2px 5px var(--shadow-color);
-}
-#credits-btn:hover {
-    background-color: var(--primary-bg);
-    transform: scale(1.1);
-}
-
-
-/* --- Top Right Controls --- */
-.top-right-controls {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 15px;
-    z-index: 1001;
-}
-
-#theme-switcher {
-    background: var(--secondary-bg);
-    border: 1px solid var(--border-color);
-    color: var(--primary-text);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: all 0.3s;
-}
-#theme-switcher:hover { background-color: var(--primary-bg); transform: scale(1.1); }
-
-/* --- Color Picker --- */
-#color-picker-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background-color: var(--secondary-bg);
-    padding: 5px 10px;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    box-shadow: 0 2px 5px var(--shadow-color);
-}
-#color-picker-container label {
-    font-weight: 400;
-    color: var(--secondary-text);
-    white-space: nowrap;
-}
-.color-picker-wrapper { position: relative; }
-#theme-color-button { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background-color: var(--primary-bg); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; font-family: 'Roboto', sans-serif; font-size: 1rem; color: var(--primary-text); transition: border-color 0.2s, background-color 0.2s; }
-#theme-color-button:hover { border-color: var(--accent-color); }
-#theme-color-preview { width: 20px; height: 20px; border-radius: 50%; background-color: var(--accent-color); border: 1px solid var(--border-color); }
-#theme-color-button .fa-caret-down { font-size: 0.8em; }
-
-#color-palette-popup {
-    position: absolute;
-    top: 50%;
-    right: calc(100% + 10px); /* Position to the left of the wrapper */
-    transform: translateY(-50%); /* Center vertically */
-    background-color: var(--secondary-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    box-shadow: 0 4px 15px var(--shadow-color);
-    padding: 1rem;
-    z-index: 1000;
-    animation: fadeIn 0.2s ease-out;
-}
-#color-palette { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
-.color-swatch { width: 28px; height: 28px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform 0.2s, border-color 0.2s; }
-.color-swatch:hover { transform: scale(1.2); }
-.color-swatch.active { border-color: var(--primary-text); box-shadow: 0 0 5px var(--primary-text); transform: scale(1.1); }
-
-
-/* --- Header --- */
-header { text-align: center; margin-bottom: 2.5rem; position: relative; padding-bottom: 1rem; }
-header h1 { font-family: 'Cinzel Decorative', serif; font-weight: 700; font-size: 3rem; color: var(--accent-color); letter-spacing: 3px; text-shadow: 2px 2px 4px var(--header-shadow); transition: color 0.3s; margin: 0; }
-header::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 150px; height: 2px; background: linear-gradient(90deg, transparent, var(--accent-color), transparent); opacity: 0.8; }
-
-
-/* --- Setup Section --- */
-.api-settings { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; padding: 1.5rem; margin-top: 1.5rem; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--primary-bg); }
-#image-uploader { width: 100%; height: 400px; border: 3px dashed var(--border-color); border-radius: 8px; margin: 2rem auto 2.5rem auto; display: flex; justify-content: center; align-items: center; text-align: center; color: var(--secondary-text); cursor: pointer; background-size: contain; background-position: center; background-repeat: no-repeat; background-color: var(--primary-bg); transition: border-color 0.3s, background-color 0.3s; }
-#image-uploader.has-image { border-color: var(--accent-color); }
-#image-uploader.dragover { border-color: var(--accent-color); background-color: color-mix(in srgb, var(--accent-color) 10%, var(--primary-bg)); }
-#image-uploader p { padding: 1rem; pointer-events: none; }
-.character-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem; }
-.input-group { display: flex; flex-direction: column; }
-.scenario-group, .personality-group { grid-column: 1 / -1; } /* MODIFIED: Added personality-group */
-.input-group label { font-weight: 400; margin-bottom: 0.5rem; color: var(--secondary-text); }
-input, select, textarea { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; background-color: var(--primary-bg); color: var(--primary-text); font-family: 'Roboto', sans-serif; font-size: 1rem; transition: border-color 0.3s, box-shadow 0.3s; }
-/* MODIFIED: Changed background-color to --primary-bg for better contrast in dark mode */
-body.dark-mode input, body.dark-mode select, body.dark-mode textarea { background-color: var(--primary-bg); }
-input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 25%, transparent); }
-input::placeholder, textarea::placeholder { color: var(--placeholder-text); opacity: 1; }
-.input-with-icon { position: relative; display: flex; align-items: center; }
-.input-with-icon input, .input-with-icon textarea { padding-right: 3rem; }
-.dice-btn { position: absolute; right: 1px; top: 1px; bottom: 1px; width: 2.8rem; border: none; background: none; font-size: 1.5rem; cursor: pointer; color: var(--secondary-text); transition: transform 0.2s, color 0.2s; border-radius: 0 6px 6px 0; display: flex; align-items: center; justify-content: center; }
-.dice-btn:hover { color: var(--accent-color); transform: rotate(20deg) scale(1.1); }
-#start-btn { display: block; width: 100%; padding: 1rem; font-size: 1.2rem; font-weight: bold; color: white; background-color: var(--accent-color); border: none; border-radius: 8px; cursor: pointer; transition: background-color 0.3s; }
-#start-btn:hover { background-color: var(--accent-hover); }
-
-/* --- Interaction Section --- */
-#interaction-section { animation: fadeIn 0.5s ease-in-out forwards; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-#back-to-setup-btn { position: absolute; top: 2.5rem; left: 2.5rem; background: var(--primary-bg); border: 1px solid var(--border-color); color: var(--primary-text); border-radius: 50%; width: 40px; height: 40px; font-size: 1.1rem; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: all 0.3s; z-index: 10; }
-#back-to-setup-btn:hover { background-color: var(--accent-color); color: white; transform: scale(1.1); }
-
-/* Character Display centered */
-#game-char-display { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-bottom: 2rem; }
-#game-char-display h3 { text-align: center; color: var(--secondary-text); font-weight: 400; font-size: 1.1rem; }
-#game-char-image { max-width: 450px; max-height: 50vh; width: auto; height: auto; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 10px var(--shadow-color); border: 2px solid var(--border-color); }
-
-/* Response container takes full width */
-#response-container { display: flex; flex-direction: column; gap: 1.5rem; }
-#response-box, #options-container { opacity: 1; transition: opacity 0.4s ease-in-out; }
-#response-box.loading, #options-container.loading { opacity: 0.3; }
-#response-box { background-color: var(--primary-bg); padding: 1.5rem; border-radius: 8px; min-height: 150px; white-space: pre-wrap; line-height: 1.7; display: flex; align-items: center; justify-content: center; }
-
-#retry-btn { padding: 0.75rem 1.5rem; background-color: var(--error-color); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: background-color 0.3s; margin: 0 auto; width: fit-content; }
-#retry-btn:hover { background-color: color-mix(in srgb, var(--error-color) 80%, black); }
-
-#options-container { display: grid; grid-template-columns: 1fr; gap: 0.75rem; }
-.option-btn { width: 100%; padding: 1rem; text-align: left; background-color: var(--secondary-bg); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; color: var(--primary-text); font-size: 1rem; transition: all 0.2s; }
-.option-btn:hover { border-color: var(--accent-color); background-color: color-mix(in srgb, var(--accent-color) 8%, var(--secondary-bg)); }
-
-#custom-input-container { display: flex; gap: 0.5rem; }
-#custom-option-input { flex-grow: 1; }
-#submit-custom-option { padding: 0.75rem 1.5rem; background-color: var(--accent-color); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: background-color 0.3s; }
-#submit-custom-option:hover { background-color: var(--accent-hover); }
-
-/* --- Loading Spinner Style --- */
-.spinner { font-size: 2rem; color: var(--accent-color); animation: fa-spin 1.5s infinite linear; }
-@keyframes fa-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-/* --- Responsive Styles for Mobile & Tablets --- */
-@media screen and (max-width: 850px) {
-    body {
-        /* Reduce body padding and align content to the top */
-        padding: 1rem;
-        align-items: stretch;
-        justify-content: flex-start;
-        flex-direction: column;
+    // --- Constants ---
+    const themeColors = [
+        // Blue
+        ['#1976d2', '#1e88e5'],
+        // Pink
+        ['#E64A6F', '#FF8DA1'],
+        // Red
+        ['#d32f2f', '#e53935'],
+        // Deep Orange
+        ['#e64a19', '#ff5722'],
+        // Amber
+        ['#ffa000', '#ffb300'],
+        // Green
+        ['#388e3c', '#43a047'],
+        // Teal
+        ['#00796b', '#00897b'],
+        // Cyan
+        ['#0097a7', '#00acc1'],
+        // Indigo
+        ['#303f9f', '#3949ab'],
+        // Deep Purple
+        ['#512da8', '#5e35b1'],
+        // Brown
+        ['#5d4037', '#6d4c41'],
+        // Blue Grey
+        ['#455a64', '#546e7a']
+    ];
+    // --- Initialization ---
+    async function initializeApp() {
+        try {
+            loadTheme();
+            setupColorPicker();
+            loadAccentColor();
+            const savedLang = localStorage.getItem('currentLang') || 'en';
+            await loadLanguage(savedLang);
+            setupEventListeners();
+        } catch (error) {
+            console.error("Initialization Failed:", error);
+            document.body.innerHTML = `Error: Could not load lang.json. Details: ${error.message}`;
+        }
     }
 
-    .container {
-        /* Reduce padding and remove top margin for a tighter fit */
-        padding: 1.5rem;
-        margin-top: 1rem;
+    // --- Language and UI Text ---
+    async function loadLanguage(lang) {
+        try {
+            const response = await fetch('lang.json');
+            if (!response.ok) throw new Error('Failed to load lang.json');
+            const allLangs = await response.json();
+            langData = allLangs[lang];
+            document.documentElement.lang = lang;
+            document.querySelectorAll('[data-lang]').forEach(el => el.textContent = langData[el.getAttribute('data-lang')] || '');
+            document.querySelectorAll('[data-lang-placeholder]').forEach(el => el.placeholder = langData[el.getAttribute('data-lang-placeholder')] || '');
+            genderSelect.innerHTML = langData.genders.map(g => `<option value="${g}">${g}</option>`).join('');
+            modelSelect.innerHTML = langData.models.map(m => `<option value="${m.value}">${m.text}</option>`).join('');
+            document.querySelectorAll('#lang-switcher button').forEach(btn => btn.classList.toggle('active', btn.getAttribute('data-lang-code') === lang));
+            localStorage.setItem('currentLang', lang);
+        } catch (error) {
+            console.error(`Failed to load language "${lang}":`, error);
+        }
     }
 
-    /* --- Reposition Corner Controls --- */
-    .top-left-controls, .top-right-controls {
-        /* Change from 'fixed' to 'static' to place them in the document flow */
-        position: static; 
-        /* Arrange items in a row and allow wrapping */
-        flex-direction: row;
-        flex-wrap: wrap;
-        align-items: center;
-        width: 100%;
+    // --- Theme and Color ---
+    function loadTheme() { const isDarkMode = localStorage.getItem('darkMode') === 'true'; document.body.classList.toggle('dark-mode', isDarkMode); themeSwitcher.innerHTML = isDarkMode ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>'; }
+    function toggleTheme() { const isDarkMode = document.body.classList.toggle('dark-mode'); localStorage.setItem('darkMode', isDarkMode); themeSwitcher.innerHTML = isDarkMode ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>'; }
+
+    function setupColorPicker() {
+        colorPalette.innerHTML = '';
+        themeColors.forEach(([baseColor, hoverColor]) => {
+            const swatch = document.createElement('div');
+            swatch.className = 'color-swatch';
+            swatch.style.backgroundColor = baseColor;
+            swatch.dataset.baseColor = baseColor;
+            swatch.addEventListener('click', () => {
+                selectAccentColor(baseColor, hoverColor);
+                colorPalettePopup.classList.add('hidden');
+            });
+            colorPalette.appendChild(swatch);
+        });
     }
 
-    .top-left-controls {
-        /* Center the left controls and add space below */
-        justify-content: center;
-        margin-bottom: 1rem;
+    function selectAccentColor(baseColor, hoverColor) {
+        applyAccentColor(baseColor, hoverColor);
+        localStorage.setItem('accentColor', baseColor);
+        localStorage.setItem('accentHoverColor', hoverColor);
+        document.querySelector('.color-swatch.active')?.classList.remove('active');
+        const newActiveSwatch = document.querySelector(`.color-swatch[data-base-color="${baseColor}"]`);
+        if (newActiveSwatch) newActiveSwatch.classList.add('active');
     }
 
-    .top-right-controls {
-        /* Center the right controls */
-        justify-content: center;
+    function applyAccentColor(baseColor, hoverColor) {
+        document.documentElement.style.setProperty('--accent-color', baseColor);
+        document.documentElement.style.setProperty('--accent-hover', hoverColor);
+        themeColorPreview.style.backgroundColor = baseColor;
     }
 
-    #color-palette-popup {
-        /* Reposition popup to open downwards and to the right */
-        top: calc(100% + 10px);
-        right: 0;
-        left: auto;
-        transform: translateY(0);
-    }
-    
-    /* --- Adjust Typography and Spacing --- */
-    header h1 {
-        font-size: 2.2rem;
-        letter-spacing: 1px;
+    function loadAccentColor() {
+        const savedBase = localStorage.getItem('accentColor') || themeColors[0][0];
+        const savedHover = localStorage.getItem('accentHoverColor') || themeColors[0][1];
+        selectAccentColor(savedBase, savedHover);
     }
 
-    header {
-        margin-bottom: 2rem;
+    // --- Image Uploader ---
+    function handleImageFile(file) { if (file && file.type.startsWith('image/')) { const reader = new FileReader(); reader.onload = (e) => { imageUploader.style.backgroundImage = `url('${e.target.result}')`; imageUploader.classList.add('has-image'); if (imageUploaderText) imageUploaderText.style.display = 'none'; characterImage = { mimeType: file.type, data: e.target.result.split(',')[1] }; }; reader.readAsDataURL(file); } }
+
+    // --- Game Start ---
+    async function startGame() {
+        const characterData = validateAndGetData();
+        if (!characterData) return;
+
+        setupSection.classList.add('hidden');
+        interactionSection.classList.remove('hidden');
+
+        if (characterImage) {
+            gameCharImage.src = `data:${characterImage.mimeType};base64,${characterImage.data}`;
+            gameCharDisplay.classList.remove('hidden');
+        } else {
+            gameCharDisplay.classList.add('hidden');
+        }
+
+        conversationHistory = [];
+        retryBtn.classList.add('hidden');
+
+        const currentLang = localStorage.getItem('currentLang') || 'en';
+        const systemPrompt = systemPrompts[currentLang]?.system;
+        if (!systemPrompt || systemPrompt.trim().toLowerCase() === 'empty here') {
+            const errorMsg = currentLang === 'en' ? "System prompt is missing." : `System prompt for (${currentLang}) is missing. Please select English.`;
+            responseBox.textContent = "Error: " + errorMsg;
+            setupSection.classList.remove('hidden');
+            interactionSection.classList.add('hidden');
+            return;
+        }
+
+        const textPrompt = systemPrompt + "\n\nHere is the character and scenario setup:\n" + JSON.stringify(characterData, null, 2);
+        const initialTurn = { role: 'user', parts: [{ text: textPrompt }, { inlineData: { mimeType: characterImage.mimeType, data: characterImage.data } }] };
+        conversationHistory.push(initialTurn);
+
+        await callGeminiAPI();
     }
 
-    /* --- Adjust Form Elements --- */
-    #image-uploader {
-        height: 300px; /* Reduce height for smaller screens */
-        margin-top: 1.5rem;
-        margin-bottom: 2rem;
+    // --- Validation ---
+    function validateAndGetData() {
+        let isValid = true;
+        [apiKeyInput, charNameInput, personalityInput].forEach(input => { if (input.value.trim() === '') { input.style.borderColor = 'var(--error-color)'; if (isValid) input.focus(); isValid = false; } });
+        if (isNaN(parseInt(charAgeInput.value)) || parseInt(charAgeInput.value) < 18) { charAgeInput.style.borderColor = 'var(--error-color)'; if (isValid) charAgeInput.focus(); isValid = false; }
+        if (!characterImage) { imageUploader.style.borderColor = 'var(--error-color)'; isValid = false; }
+        if (!isValid) return null;
+        return { name: charNameInput.value.trim(), age: parseInt(charAgeInput.value), gender: genderSelect.value, personality: personalityInput.value.trim(), scenario: scenarioInput.value.trim() || null };
     }
 
-    .character-inputs, .api-settings {
-        gap: 1rem; /* Reduce gap between inputs */
+    // --- Event Listeners ---
+    function setupEventListeners() {
+        themeSwitcher.addEventListener('click', toggleTheme);
+        langSwitcher.addEventListener('click', (e) => { if (e.target.tagName === 'BUTTON') { const langCode = e.target.getAttribute('data-lang-code'); if (langCode) loadLanguage(langCode); } });
+
+        //Credits button listener
+        creditsBtn.addEventListener('click', () => {
+            alert('Sex Sim AI v1.1\n\n© 2025 Joshua Z. All Rights Reserved.\n\nDeveloped for entertainment purposes only. \nPlease refrain from using real individuals in any scenario.');
+        });
+
+        themeColorButton.addEventListener('click', (e) => { e.stopPropagation(); colorPalettePopup.classList.toggle('hidden'); });
+        document.addEventListener('click', (e) => { if (!colorPickerWrapper.contains(e.target)) colorPalettePopup.classList.add('hidden'); });
+
+        [apiKeyInput, charNameInput, personalityInput, charAgeInput].forEach(input => input.addEventListener('input', () => input.style.borderColor = ''));
+        imageUploader.addEventListener('click', () => imageUploader.style.borderColor = '');
+        imageUploader.addEventListener('dragover', e => { e.preventDefault(); imageUploader.classList.add('dragover'); });
+        imageUploader.addEventListener('dragleave', () => imageUploader.classList.remove('dragover'));
+        imageUploader.addEventListener('drop', e => { e.preventDefault(); imageUploader.classList.remove('dragover'); handleImageFile(e.dataTransfer.files[0]); });
+        document.addEventListener('paste', e => { if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return; const file = Array.from(e.clipboardData.items).find(item => item.type.includes('image'))?.getAsFile(); if (file) handleImageFile(file); });
+
+        personalityDice.addEventListener('click', () => { if (langData.personalities?.length) { personalityInput.value = langData.personalities[Math.floor(Math.random() * langData.personalities.length)]; } });
+        scenarioDice.addEventListener('click', () => { if (langData.scenarios?.length) { scenarioInput.value = langData.scenarios[Math.floor(Math.random() * langData.scenarios.length)]; } });
+
+        startBtn.addEventListener('click', startGame);
+
+        backToSetupBtn.addEventListener('click', () => {
+            interactionSection.classList.add('hidden');
+            setupSection.classList.remove('hidden');
+            conversationHistory = [];
+            isWaitingForResponse = false;
+            retryBtn.classList.add('hidden');
+        });
+
+        retryBtn.addEventListener('click', () => {
+            // Check if we are retrying the initial call.
+            // This is true if history has only the initial user prompt.
+            if (conversationHistory.length === 1) {
+                callGeminiAPI(); // Just call the API again. History is already correct.
+            } else if (lastUserActionAttempt) {
+                handleInteraction(true); // Standard retry for subsequent actions.
+            }
+        });
+
+        optionsContainer.addEventListener('click', e => {
+            if (e.target.classList.contains('option-btn')) {
+                customOptionInput.value = e.target.textContent;
+                customOptionInput.focus();
+            }
+        });
+
+        submitCustomOption.addEventListener('click', () => handleInteraction(false));
+        customOptionInput.addEventListener('keydown', e => { if (e.key === 'Enter') handleInteraction(false); });
     }
 
-    /* --- Adjust Interaction Section Elements --- */
-    #back-to-setup-btn {
-        /* Reposition button to match new container padding */
-        top: 1.5rem;
-        left: 1.5rem;
+    // --- Core Interaction & API Logic ---
+    async function handleInteraction(isRetry = false) {
+        const choice = isRetry ? lastUserActionAttempt : customOptionInput.value;
+        if (!choice || isWaitingForResponse) return;
+
+        lastUserActionAttempt = choice.trim();
+        if (!isRetry) customOptionInput.value = '';
+
+        conversationHistory.push({ role: 'user', parts: [{ text: lastUserActionAttempt }] });
+        await callGeminiAPI();
     }
 
-    #game-char-image {
-        max-height: 40vh; /* Ensure image doesn't take up too much vertical space */
+    async function updateInteractionUI(apiResponse) {
+        let displayText = apiResponse.mainText;
+        if (!displayText.startsWith('🔓')) { displayText = '🔓 ' + displayText; }
+        responseBox.innerHTML = '';
+        responseBox.style.justifyContent = 'flex-start';
+        responseBox.textContent = displayText;
+        const newOptions = Object.values(apiResponse.options);
+        optionsContainer.innerHTML = newOptions.map(opt => `<button class="option-btn">${opt}</button>`).join('');
+        lastSuccessfulOptions = newOptions;
     }
-}
 
-@media screen and (max-width: 480px) {
-    .container {
-        padding: 1rem; /* Further reduce padding on very small screens */
+    function setLoadingState(isLoading) {
+        isWaitingForResponse = isLoading;
+        responseBox.classList.toggle('loading', isLoading);
+        optionsContainer.classList.toggle('loading', isLoading);
+        if (isLoading) {
+            retryBtn.classList.add('hidden');
+            optionsContainer.innerHTML = '';
+            responseBox.style.justifyContent = 'center';
+            responseBox.innerHTML = '<i class="fas fa-spinner spinner"></i>';
+        }
     }
-    #back-to-setup-btn {
-        top: 1rem;
-        left: 1rem;
-        width: 35px;
-        height: 35px;
-        font-size: 1rem;
+
+    function parseApiResponse(text) { try { return JSON.parse(text); } catch (e) { } const jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/); if (jsonMatch && jsonMatch[1]) { try { return JSON.parse(jsonMatch[1]); } catch (e) { } } const rawJsonMatch = text.match(/(\{[\s\S]*\})/); if (rawJsonMatch && rawJsonMatch[1]) { try { return JSON.parse(rawJsonMatch[1]); } catch (e) { } } const lines = text.split('\n').filter(line => line.trim() !== ''); const options = []; const mainTextLines = []; const optionRegex = /^\s*\*?\s*[1-3][\.\)]\s*\*?\s*(.*)/; for (const line of lines) { const match = line.match(optionRegex); if (match && match[1]) { options.push(match[1].trim()); } else { mainTextLines.push(line); } } if (options.length >= 3) { console.log("Heuristic parse successful."); return { mainText: mainTextLines.join('\n').trim(), options: { option1: options[0], option2: options[1], option3: options[2] } }; } throw new Error("API response is not valid JSON and could not be parsed as plain text."); }
+
+    async function callGeminiAPI() {
+        setLoadingState(true);
+        const apiKey = apiKeyInput.value;
+        const model = modelSelect.value;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+        try {
+            const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: conversationHistory }) });
+            if (!response.ok) { const errorData = await response.json(); throw new Error(errorData.error.message || `HTTP error! status: ${response.status}`); }
+
+            const data = await response.json();
+            if (!data.candidates || data.candidates.length === 0) { throw new Error("API returned no response candidates. The prompt may have been blocked."); }
+
+            const responseText = data.candidates[0].content.parts[0].text;
+            const parsedResponse = parseApiResponse(responseText);
+            conversationHistory.push({ role: 'model', parts: [{ text: JSON.stringify(parsedResponse) }] });
+            await updateInteractionUI(parsedResponse);
+        } catch (error) {
+            console.error("API or Parsing Error:", error);
+            // If the history length is greater than 1, it's a subsequent action that failed.
+            // Remove it so we can retry the previous state.
+            // If the length is 1, it's the initial prompt that failed. We leave it in the
+            // history so the retry button can resend it.
+            if (conversationHistory.length > 1) {
+                conversationHistory.pop();
+            }
+            responseBox.innerHTML = '';
+            responseBox.style.justifyContent = 'flex-start';
+            responseBox.textContent = `An error occurred: ${error.message}\n\nYou can edit your action and try again, or press Retry.`;
+
+            retryBtn.classList.remove('hidden');
+            customOptionInput.value = lastUserActionAttempt; // Restore failed action for editing
+
+            if (lastSuccessfulOptions?.length > 0) {
+                optionsContainer.innerHTML = lastSuccessfulOptions.map(opt => `<button class="option-btn">${opt}</button>`).join('');
+            } else {
+                optionsContainer.innerHTML = '<p>Cannot restore options.</p>';
+            }
+        } finally {
+            setLoadingState(false);
+        }
     }
-    header h1 {
-        font-size: 1.8rem;
-    }
-    #custom-input-container {
-        flex-direction: column; /* Stack custom input and button vertically */
-    }
-    #submit-custom-option {
-        width: 100%;
-    }
-}
+
+    // --- Run Application ---
+    initializeApp();
+});
