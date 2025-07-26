@@ -11,10 +11,7 @@
       href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Roboto:wght@300;400&display=swap"
       rel="stylesheet"
     />
-    <script
-      src="https://kit.fontawesome.com/a076d05399.js"
-      crossorigin="anonymous"
-    ></script>
+    <!-- REMOVED the conflicting Font Awesome JS Kit. The CSS link below is all you need. -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
@@ -71,9 +68,10 @@
             <select id="model-select"></select>
           </div>
         </div>
-        <div id="image-uploader">
+        <!-- CHANGED: The div is now a label with a 'for' attribute pointing to the hidden file input. -->
+        <label id="image-uploader" for="image-file-input">
           <p data-lang="imageDropText">Drag & Drop or Paste (Ctrl+V) Image</p>
-        </div>
+        </label>
         <input type="file" id="image-file-input" class="hidden" accept="image/*" />
         <div class="character-inputs">
           <div class="input-group">
