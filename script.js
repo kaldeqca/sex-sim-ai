@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.addEventListener('click', (e) => { if (!colorPickerWrapper.contains(e.target)) colorPalettePopup.classList.add('hidden'); });
 
         [apiKeyInput, charNameInput, personalityInput, charAgeInput].forEach(input => input.addEventListener('input', () => input.style.borderColor = ''));
-        
+
         // --- Image Uploader Listeners ---
         // The click listener for imageUploader is NO LONGER NEEDED because we are using a <label>.
         // Clicking the label now natively triggers the file input.
@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 handleImageFile(file);
             }
         });
-        
+
         imageUploader.addEventListener('dragover', e => { e.preventDefault(); imageUploader.classList.add('dragover'); });
         imageUploader.addEventListener('dragleave', () => imageUploader.classList.remove('dragover'));
         imageUploader.addEventListener('drop', e => { e.preventDefault(); imageUploader.classList.remove('dragover'); handleImageFile(e.dataTransfer.files[0]); });
@@ -267,7 +267,8 @@ document.addEventListener('DOMContentLoaded', () => {
         lastUserActionAttempt = choice.trim();
         if (!isRetry) customOptionInput.value = '';
 
-        conversationHistory.push({ role: 'user', parts: [{ text: lastUserActionActionAttempt }] });
+        // THIS LINE IS NOW CORRECTED
+        conversationHistory.push({ role: 'user', parts: [{ text: lastUserActionAttempt }] });
         await callGeminiAPI();
     }
 
