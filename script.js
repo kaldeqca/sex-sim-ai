@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const apiKeyInput = document.getElementById('api-key');
     const modelSelect = document.getElementById('model-select');
     const imageUploader = document.getElementById('image-uploader');
+    const imageFileInput = document.getElementById('image-file-input'); // Added for click-to-upload
     const imageUploaderText = imageUploader.querySelector('p');
     const charNameInput = document.getElementById('char-name');
     const charAgeInput = document.getElementById('char-age');
@@ -204,7 +205,20 @@ document.addEventListener('DOMContentLoaded', () => {
         document.addEventListener('click', (e) => { if (!colorPickerWrapper.contains(e.target)) colorPalettePopup.classList.add('hidden'); });
 
         [apiKeyInput, charNameInput, personalityInput, charAgeInput].forEach(input => input.addEventListener('input', () => input.style.borderColor = ''));
-        imageUploader.addEventListener('click', () => imageUploader.style.borderColor = '');
+        
+        // --- Image Uploader Listeners ---
+        imageUploader.addEventListener('click', () => {
+            imageUploader.style.borderColor = ''; // Reset border color on click
+            imageFileInput.click(); // Trigger hidden file input
+        });
+
+        imageFileInput.addEventListener('change', e => {
+            const file = e.target.files[0];
+            if (file) {
+                handleImageFile(file);
+            }
+        });
+        
         imageUploader.addEventListener('dragover', e => { e.preventDefault(); imageUploader.classList.add('dragover'); });
         imageUploader.addEventListener('dragleave', () => imageUploader.classList.remove('dragover'));
         imageUploader.addEventListener('drop', e => { e.preventDefault(); imageUploader.classList.remove('dragover'); handleImageFile(e.dataTransfer.files[0]); });
