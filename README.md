@@ -4,6 +4,12 @@ Sex Sim AI is an immersive, web-based erotic roleplaying simulator powered by Go
 
 <img src="https://i.imgur.com/4CTIEGB.png">
 
+## [🌐 Live Demo](https://sex-sim-ai.onrender.com/)
+
+[**[🚀 Try the Live Demo Now!]**](https://sex-sim-ai.onrender.com/)
+
+Experience the full functionality of Sex Sim AI directly in your browser—no installation required. The application is hosted live for easy access.
+
 ## ✨ Features
 
 - **AI-Powered Roleplay**: Utilizes the Google Gemini API to generate dynamic, immersive, and erotic narratives.
