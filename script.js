@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const apiKeyInput = document.getElementById('api-key');
     const modelSelect = document.getElementById('model-select');
     const imageUploader = document.getElementById('image-uploader');
-    const imageFileInput = document.getElementById('image-file-input'); // Added for click-to-upload
+    const imageFileInput = document.getElementById('image-file-input');
     const imageUploaderText = imageUploader.querySelector('p');
     const charNameInput = document.getElementById('char-name');
     const charAgeInput = document.getElementById('char-age');
@@ -207,9 +207,10 @@ document.addEventListener('DOMContentLoaded', () => {
         [apiKeyInput, charNameInput, personalityInput, charAgeInput].forEach(input => input.addEventListener('input', () => input.style.borderColor = ''));
         
         // --- Image Uploader Listeners ---
+        // The click listener for imageUploader is NO LONGER NEEDED because we are using a <label>.
+        // Clicking the label now natively triggers the file input.
         imageUploader.addEventListener('click', () => {
-            imageUploader.style.borderColor = ''; // Reset border color on click
-            imageFileInput.click(); // Trigger hidden file input
+            imageUploader.style.borderColor = ''; // We can keep this to reset the error border color.
         });
 
         imageFileInput.addEventListener('change', e => {
@@ -266,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
         lastUserActionAttempt = choice.trim();
         if (!isRetry) customOptionInput.value = '';
 
-        conversationHistory.push({ role: 'user', parts: [{ text: lastUserActionAttempt }] });
+        conversationHistory.push({ role: 'user', parts: [{ text: lastUserActionActionAttempt }] });
         await callGeminiAPI();
     }
 
