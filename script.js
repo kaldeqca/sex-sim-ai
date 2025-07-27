@@ -378,12 +378,45 @@ document.addEventListener('DOMContentLoaded', () => {
         const model = modelSelect.value;
         const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
+        const payload = {
+            contents: conversationHistory,
+            safetySettings: [
+                {
+                    "category": "HARM_CATEGORY_HARASSMENT",
+                    "threshold": "BLOCK_NONE"
+                },
+                {
+                    "category": "HARM_CATEGORY_HATE_SPEECH",
+                    "threshold": "BLOCK_NONE"
+                },
+                {
+                    "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                    "threshold": "BLOCK_NONE"
+                },
+                {
+                    "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+                    "threshold": "BLOCK_NONE"
+                }
+            ]
+        };
+
         try {
-            const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: conversationHistory }) });
+            const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
             if (!response.ok) { const errorData = await response.json(); throw new Error(errorData.error.message || `HTTP error! status: ${response.status}`); }
 
             const data = await response.json();
-            if (!data.candidates || data.candidates.length === 0) { throw new Error("API returned no response candidates. The prompt may have been blocked."); }
+            if (!data.candidates || data.candidates.length === 0) {
+                const blockReason = data.promptFeedback?.blockReason;
+                const safetyRatings = data.promptFeedback?.safetyRatings;
+                let errorDetails = "API returned no response candidates. The prompt may have been blocked.";
+                if (blockReason) {
+                    errorDetails += ` Reason: ${blockReason}.`;
+                }
+                if (safetyRatings) {
+                    errorDetails += ` Ratings: ${JSON.stringify(safetyRatings)}`;
+                }
+                throw new Error(errorDetails);
+            }
 
             const responseText = data.candidates[0].content.parts[0].text;
             const parsedResponse = parseAdvancedJSON(responseText);
