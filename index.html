@@ -11,14 +11,13 @@
       href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Roboto:wght@300;400&display=swap"
       rel="stylesheet"
     />
-    <!-- REMOVED the conflicting Font Awesome JS Kit. The CSS link below is all you need. -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
   </head>
   <body>
-    <!-- All Controls container for top-left elements -->
+    <!-- Top-left controls -->
     <div class="top-left-controls">
       <div id="lang-switcher">
         <button data-lang-code="en">EN</button>
@@ -30,7 +29,7 @@
       </button>
     </div>
 
-    <!-- All controls container for top-right elements -->
+    <!-- Top-right controls -->
     <div class="top-right-controls">
       <button id="theme-switcher"><i class="fas fa-moon"></i></button>
       <div id="color-picker-container">
@@ -68,11 +67,24 @@
             <select id="model-select"></select>
           </div>
         </div>
-        <!-- CHANGED: The div is now a label with a 'for' attribute pointing to the hidden file input. -->
+
+        <div id="mode-switcher">
+            <div id="mode-slider"></div>
+            <div class="mode-option active" data-mode="classic">
+                <h3 data-lang="classicModeTitle">Classic</h3>
+                <p data-lang="classicModeDesc">A pure erotic sandbox...</p>
+            </div>
+            <div class="mode-option" data-mode="realistic">
+                <h3 data-lang="realisticModeTitle">Realistic</h3>
+                <p data-lang="realisticModeDesc">A dynamic roleplay...</p>
+            </div>
+        </div>
+
         <label id="image-uploader" for="image-file-input">
           <p data-lang="imageDropText">Drag & Drop or Paste (Ctrl+V) Image</p>
         </label>
         <input type="file" id="image-file-input" class="hidden" accept="image/*" />
+        
         <div class="character-inputs">
           <div class="input-group">
             <label for="char-name" data-lang="nameLabel">Name</label>
@@ -90,7 +102,6 @@
             <label for="char-gender" data-lang="genderLabel">Gender</label>
             <select id="char-gender"></select>
           </div>
-          <!-- 'personality-group' class is fullwidth -->
           <div class="input-group personality-group">
             <label for="char-personality" data-lang="personalityLabel"
               >Personality</label
@@ -122,6 +133,36 @@
             </div>
           </div>
         </div>
+        
+        <div id="advanced-options" class="hidden">
+            <button id="advanced-options-toggle">
+                <span data-lang="advancedOptionsLabel">Advanced Realistic Options</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div id="advanced-options-content" class="hidden">
+                <div class="toggle-option">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="show-stats-toggle">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <div class="toggle-description">
+                        <h4 data-lang="showStatesLabel">Show State Meters</h4>
+                        <p data-lang="showStatesDesc">Display the character's core states...</p>
+                    </div>
+                </div>
+                <div class="toggle-option">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="show-reasoning-toggle">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <div class="toggle-description">
+                        <h4 data-lang="showReasoningLabel">Show AI Reasoning</h4>
+                        <p data-lang="showReasoningDesc">Include a breakdown...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <button id="start-btn" data-lang="startButton">Begin</button>
       </main>
 
@@ -129,12 +170,10 @@
         <button id="back-to-setup-btn" title="Back to Setup">
           <i class="fas fa-arrow-left"></i>
         </button>
-
         <div id="game-char-display">
           <h3 data-lang="gameCharacterLabel">Who You Are Fucking Today</h3>
           <img id="game-char-image" src="" alt="Character Image" />
         </div>
-
         <div id="response-container">
           <div id="response-box"></div>
           <button id="retry-btn" class="hidden" data-lang="retryButton">
@@ -152,6 +191,7 @@
             </button>
           </div>
         </div>
+        <div id="stats-display-container" class="hidden"></div>
       </section>
     </div>
 
