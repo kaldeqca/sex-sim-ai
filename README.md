@@ -2,7 +2,9 @@
 
 Sex Sim AI is an immersive, web-based erotic roleplaying simulator powered by Google's Gemini API. It allows users to create a character by uploading an image and defining their personality, then engage in an interactive, AI-driven sexual roleplay. The application is designed to be highly customizable, featuring multi-language support, theme switching, and color personalization.
 
-<img src="https://i.imgur.com/4CTIEGB.png">
+The application now features two distinct gameplay modes: **Classic Mode** for a pure, unrestrained sandbox experience, and the new **Realistic Mode**, where characters have freewill, a persistent state and memory, and react dynamically to your choices, creating a much deeper, more consequential narrative.
+
+<img src="https://i.imgur.com/0iT32M5.png">
 
 ## [🌐 Live Demo](https://sex-sim-ai.onrender.com/)
 
@@ -12,17 +14,36 @@ Experience the full functionality of Sex Sim AI directly in your browser—no in
 
 ## ✨ Features
 
-- **AI-Powered Roleplay**: Utilizes the Google Gemini API to generate dynamic, immersive, and erotic narratives.
+- **Dual Gameplay Modes**:
+    - **Classic Mode**: A pure erotic sandbox—unrestrained, creative, and focused on fulfilling your fantasies without limits.
+    - **Realistic Mode**: A dynamic roleplay where the character has their own freewill. Your choices truly matter and can build relationships or face resistance based on their internal state.
+- **AI-Powered Narrative**: Utilizes the Google Gemini API to generate dynamic, immersive, and erotic storylines in both modes.
+- **Advanced Realistic Options**: In Realistic Mode, you can choose to display the character's internal state meters (Rapport, Control, etc.) and the AI's reasoning for why their feelings changed.
 - **Visual Character Creation**: Upload a character image via drag & drop or pasting from the clipboard.
 - **Deep Customization**: Define the character's name, age, gender, personality, and an optional starting scenario.
-- **Interactive Gameplay**: The AI provides a descriptive narrative and three distinct action choices to drive the story forward. Users can also type their own custom actions.
+- **Interactive Gameplay**: The AI provides a descriptive narrative and three distinct action choices. Users can also type their own custom actions.
 - **Multi-Language Support**: Fully internationalized UI and AI prompts for English (EN), Chinese (中文), and Japanese (日本語).
-- **Theming**: Instantly switch between a sleek Light Mode and an eye-friendly Dark Mode.
-- **Personalized Colors**: Choose from a palette of 12 accent colors to customize the UI to your liking.
-- **Randomizers**: Dice buttons to randomly select a personality or scenario from a pre-defined, extensive list.
+- **Theming & Personalization**: Instantly switch between Light/Dark modes and choose from 12 accent colors.
+- **Randomizers**: Dice buttons to randomly select a personality or scenario from an extensive, pre-defined list.
 - **Robust Error Handling**: If an API call fails, the app allows you to retry your last action without losing your place in the story.
 - **Responsive Design**: A clean, modern interface that works seamlessly on both desktop and mobile devices.
 - **State Persistence**: Your chosen theme, language, and accent color are saved in your browser's `localStorage`.
+
+## 🕹️ Gameplay Modes in Detail
+
+### Classic Mode
+This is the original Sex Sim AI experience. It's designed as a straightforward, creative sandbox where the AI's primary goal is to facilitate the user's fantasy. The narrative is always moving forward based on your choices, with a focus on vivid, erotic descriptions and escalating scenarios.
+
+### Realistic Mode: The C.O.R.E. System
+The new Realistic Mode introduces the **C.O.R.E. (Contextual Observable Reaction Engine)**, a sophisticated system that gives the character a persistent internal state and freewill.
+
+-   **Consequences Matter**: Actions have lasting effects. Building trust and desire requires careful choices, while aggressive or misaligned actions can lead to resistance, fear, or a complete shift in the narrative.
+-   **A.R.C. Meters**: The AI internally tracks the character's state using three key metrics:
+    -   **Alignment**: How well your actions fit the established context and "rules" of the scene.
+    -   **Rapport**: The character's personal feelings toward you (lust, fear, affection, hatred).
+    -   **Control**: A fluid measure of who has the upper hand in the situation.
+-   **Dynamic Reactions**: The character's responses—their dialogue, body language, and actions—are directly influenced by these meters. You must *show*, not just tell, them what you want, and they will react accordingly.
+-   **Optional Insights**: You can enable "Show State Meters" to see the character's A.R.C. values after each turn, and "Show Reasoning" to get a clinical breakdown from the AI on *why* those values changed based on your last action.
 
 ## 🚀 How It Works
 
