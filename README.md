@@ -94,6 +94,7 @@ To run this project locally, you will need a Google Gemini API Key.
 ├── index.html     # The main HTML structure of the application.
 ├── style.css      # All CSS styling for both light and dark themes.
 ├── script.js      # Core application logic, event listeners, and API calls.
+├── parser.js      # Advanced JSON parser to handle malformed API responses.
 ├── config.js      # Contains the detailed system prompts for the AI in all supported languages.
 ├── lang.json      # All UI text strings for internationalization (i18n).
 └── README.md      # You are here.
