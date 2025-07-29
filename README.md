@@ -4,13 +4,41 @@ Sex Sim AI is an immersive, web-based erotic roleplaying simulator powered by Go
 
 The application now features two distinct gameplay modes: **Classic Mode** for a pure, unrestrained sandbox experience, and the new **Realistic Mode**, where characters have freewill, a persistent state and memory, and react dynamically to your choices, creating a much deeper, more consequential narrative.
 
-<img src="https://i.imgur.com/0iT32M5.png">
+<img src="https://i.imgur.com/4XQwYlL.png">
 
 ## [🌐 Live Demo](https://sex-sim-ai.onrender.com/)
 
 [**[🚀 Try the Live Demo Now!]**](https://sex-sim-ai.onrender.com/)
 
 Experience the full functionality of Sex Sim AI directly in your browser—no installation required. The application is hosted live for easy access.
+
+## 🌟 What's New in the Version 2.5 Update
+
+Version 2.5 is a ground-up transformation of the Sex Sim AI experience, moving from a temporary turn-based interaction to a full-featured, persistent chat simulation.
+
+### A True, Persistent Chat Experience
+The core interaction model has been completely rebuilt for deeper immersion.
+
+-   **Full Conversation History:** The biggest change is here! Your entire roleplay session is now displayed in a scrolling chat window. You can review every step of the story, from the beginning to the latest response. No more losing track of the narrative as old messages are replaced!
+-   **Intuitive "Edit Last Action" Function:** The edit feature has been redesigned to work seamlessly with the new chat history. You can now modify your last message and resubmit it, and the AI's previous response will be cleanly replaced without destroying the rest of the conversation.
+-   **Immersive Interface:** The chat window features a hidden scrollbar for a cleaner, more focused aesthetic.
+
+### Introducing Character Cards
+Personalization and convenience are now at the forefront.
+
+-   **Save & Load Your Creations:** The most requested feature has arrived! You can now save your complete character—image, name, age, gender, personality, and even the starting scenario—into a single, portable `.png` file.
+-   **Instant Setup:** Load a Character Card with a single click to instantly populate the entire setup screen and jump right back into a scene with your favorite characters.
+
+### Enhanced International Support
+We've massively improved the experience for our global users.
+
+-   **Language-Specific Parsers:** Dedicated parsers for Chinese (`CN_Parser.js`) and Japanese (`JP_Parser.js`) have been implemented. This fixes critical errors where responses were marked as "damaged" and dramatically improves parsing reliability for non-English roleplay.
+-   **Cross-Language Compatibility:** Loading a Character Card in a different language will now correctly select the character's gender, thanks to a robust new mapping system.
+
+### Quality of Life & Robustness
+-   **Increased Image Size Limit:** The character image upload limit has been raised to **5MB**, allowing for much higher-quality visuals.
+-   **Refined UI Layout:** The main controls (language, theme, etc.) have been moved to the top of the page for a cleaner, more accessible layout.
+-   **Clearer Error Messages:** The application now provides better feedback for common issues, such as uploading an image that is too large for the API.
 
 ## ✨ Features
 
@@ -91,13 +119,17 @@ To run this project locally, you will need a Google Gemini API Key.
 
 ```
 .
-├── index.html     # The main HTML structure of the application.
-├── style.css      # All CSS styling for both light and dark themes.
-├── script.js      # Core application logic, event listeners, and API calls.
-├── parser.js      # Advanced JSON parser to handle malformed API responses.
-├── config.js      # Contains the detailed system prompts for the AI in all supported languages.
-├── lang.json      # All UI text strings for internationalization (i18n).
-└── README.md      # You are here.
+├── index.html         # The main setup page for the application.
+├── game.html          # The interactive chat/game page.
+├── style.css          # All CSS styling for both light and dark themes.
+├── script.js          # Core application logic, event listeners, dynamic parser loading, and API calls.
+├── parser.js          # The default (English) JSON parser and validator.
+├── CN_Parser.js       # Language-specific parser for Chinese (中文).
+├── JP_Parser.js       # Language-specific parser for Japanese (日本語).
+├── cardManager.js     # Handles saving/loading character data to/from PNG files.
+├── config.js          # Contains the detailed system prompts for the AI in all supported languages.
+├── lang.json          # All UI text strings for internationalization (i18n).
+└── README.md          # You are here.
 ```
 
 
