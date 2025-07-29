@@ -1,175 +1,176 @@
 /**
- * A sophisticated, multi-layered parser to reliably extract and validate JSON
- * from a raw LLM output string, even if it's malformed or incomplete.
+ * A definitive, multi-stage parser to reliably extract and validate JSON
+ * from a raw LLM output string. This version includes both structural
+ * validation (is it valid JSON?) and application-specific content
+ * validation (does the content meet minimum requirements?).
  */
 
-// --- Main Exported Function ---
-export function parseAdvancedJSON(text) {
+export function parseAdvancedJSON(text, mode) {
     if (!text || typeof text !== 'string') {
+        // FIXED: The error message was contradictory to the check.
+        // It now correctly states the requirement.
         throw new Error("Invalid input: Text must be a non-empty string.");
     }
 
-    // Attempt 1: Find a clean JSON object within markdown ```json ... ```
-    try {
-        const fromMarkdown = parseFromMarkdown(text);
-        if (fromMarkdown) return fromMarkdown;
-    } catch (e) {
-        console.warn("Parser(Markdown): Failed, but continuing.", e.message);
+    // Step 1: Extract the JSON string and surrounding narrative.
+    const { jsonStr, narrativeStr } = extractJsonAndNarrative(text);
+
+    if (!jsonStr) {
+        // If no JSON is found, we can't do content validation, so we return early.
+        return createDefaultResult(narrativeStr);
     }
 
-    // Attempt 2: Find the first and largest valid JSON object in the text.
-    // This is great for handling trailing garbage text.
-    try {
-        const fromBraceSearch = findLargestValidJSON(text);
-        if (fromBraceSearch) return fromBraceSearch;
-    } catch (e) {
-        console.warn("Parser(BraceSearch): Failed, but continuing.", e.message);
-    }
+    // Step 2: Parse and repair the extracted JSON string.
+    const parsedJson = salvageJson(jsonStr);
 
-    // Attempt 3: Salvage a truncated/incomplete JSON object.
-    // This is the most powerful step, attempting to repair the JSON.
-    try {
-        const fromSalvage = salvageIncompleteJSON(text);
-        if (fromSalvage) return fromSalvage;
-    } catch (e) {
-        console.warn("Parser(Salvage): Failed, but continuing.", e.message);
-    }
+    // Step 3: Combine the parts into a potential final object.
+    const finalResult = {
+        mainText: parsedJson.mainText || narrativeStr || "[No mainText found]",
+        options: parsedJson.options || {},
+        coreState: parsedJson.coreState || {}
+    };
 
-    // If all JSON parsing fails, throw an error.
-    // The old heuristic fallback is removed as it's not suitable for this complex JSON structure.
-    throw new Error("Failed to parse JSON from the response after all attempts. The data is too malformed.");
+    // Step 4: Perform application-specific content validation.
+    // This will throw an error if the content is "too damaged".
+    validateContent(finalResult, mode);
+
+    // If validation passes, return the final object.
+    return finalResult;
 }
 
 
-// --- Parsing Strategies ---
-
 /**
- * ATTEMPT 1: Extracts JSON from a ```json ... ``` markdown block.
+ * NEW: Validates the content of the parsed object based on the game mode.
+ * Throws an error if the validation fails.
+ * @param {object} parsedObject - The successfully parsed object.
+ * @param {string} mode - The current game mode ('classic' or 'realistic').
  */
-function parseFromMarkdown(text) {
-    const match = text.match(/```json\s*([\s\S]*?)\s*```/);
-    if (match && match[1]) {
-        try {
-            return JSON.parse(match[1]);
-        } catch (e) {
-            // If parsing fails, it might be an incomplete block,
-            // so we let the other functions try to salvage it.
-            console.warn("Parser(Markdown): Found a JSON block, but it was invalid. Trying other methods.");
-            throw e; // Re-throw to be caught by the main function's try/catch
+function validateContent(parsedObject, mode) {
+    const countWords = (str) => (!str || typeof str !== 'string') ? 0 : str.trim().split(/\s+/).length;
+
+    if (mode === 'classic') {
+        // In Classic mode, if option3 exists, it must be meaningful.
+        const option3 = parsedObject.options?.option3;
+        if (option3 && countWords(option3) < 3) {
+            throw new Error("Parse Failed: Content is too damaged. Classic mode 'option3' is shorter than 3 words.");
+        }
+    } else if (mode === 'realistic') {
+        // In Realistic mode, if reasoning exists, it must be meaningful.
+        const reasoning = parsedObject.coreState?.reasoning;
+        if (reasoning && countWords(reasoning) < 3) {
+            throw new Error("Parse Failed: Content is too damaged. Realistic mode 'reasoning' is shorter than 3 words.");
         }
     }
-    return null;
 }
 
+
 /**
- * ATTEMPT 2: Finds the largest, most complete, parsable JSON object in the string.
- * It does this by tracking brace counts, ignoring braces inside strings.
+ * Extracts the most likely JSON block and surrounding narrative from raw text.
+ * @param {string} text - The raw text from the LLM.
+ * @returns {{jsonStr: string|null, narrativeStr: string}}
  */
-function findLargestValidJSON(text) {
-    let bestCandidate = null;
-    let startIndex = text.indexOf('{');
-
-    while (startIndex !== -1) {
-        let braceCount = 1;
-        let inString = false;
-
-        for (let i = startIndex + 1; i < text.length; i++) {
-            const char = text[i];
-            const prevChar = text[i - 1];
-
-            if (char === '"' && prevChar !== '\\') {
-                inString = !inString;
-            }
-
-            if (!inString) {
-                if (char === '{') braceCount++;
-                else if (char === '}') braceCount--;
-            }
-
-            if (braceCount === 0) {
-                const candidateStr = text.substring(startIndex, i + 1);
-                try {
-                    const parsed = JSON.parse(candidateStr);
-                    // If we found a valid JSON, store it and keep looking for a bigger one
-                    // (though usually the first complete one is what we want).
-                    bestCandidate = parsed;
-                    // For our use case, the first complete object is sufficient.
-                    return bestCandidate;
-                } catch (e) {
-                    // It looked complete but wasn't. Continue searching.
-                }
-            }
-        }
-        // Find the next potential start, in case the first one was a false positive
-        startIndex = text.indexOf('{', startIndex + 1);
+function extractJsonAndNarrative(text) {
+    // Priority 1: Check for a markdown ```json block.
+    const markdownMatch = text.match(/```json\s*([\s\S]*?)\s*```/);
+    if (markdownMatch) {
+        return {
+            jsonStr: markdownMatch[1],
+            narrativeStr: text.replace(markdownMatch[0], '').trim()
+        };
     }
-    return bestCandidate;
+
+    // Priority 2: Find the first complete, balanced { ... } block.
+    const startIndex = text.indexOf('{');
+    if (startIndex === -1) {
+        return { jsonStr: null, narrativeStr: text };
+    }
+
+    let braceCount = 1, inString = false, endIndex = -1;
+    for (let i = startIndex + 1; i < text.length; i++) {
+        const char = text[i];
+        if (char === '"' && text[i - 1] !== '\\') inString = !inString;
+        if (!inString) {
+            if (char === '{') braceCount++;
+            if (char === '}') braceCount--;
+        }
+        if (braceCount === 0) {
+            endIndex = i;
+            break;
+        }
+    }
+
+    if (endIndex !== -1) {
+        const jsonBlock = text.substring(startIndex, endIndex + 1);
+        const narrativeBefore = text.substring(0, startIndex);
+        const narrativeAfter = text.substring(endIndex + 1);
+        return {
+            jsonStr: jsonBlock,
+            narrativeStr: (narrativeBefore + " " + narrativeAfter).trim()
+        };
+    } else {
+        return {
+            jsonStr: text.substring(startIndex),
+            narrativeStr: text.substring(0, startIndex).trim()
+        };
+    }
 }
 
+
 /**
- * ATTEMPT 3: Attempts to repair a truncated JSON string by closing open structures.
+ * A robust function to parse a string that is supposed to be JSON, repairing common errors.
+ * @param {string} str - The string to parse.
+ * @returns {object} A parsed JavaScript object, or an empty object on failure.
  */
-function salvageIncompleteJSON(text) {
-    let startIndex = text.indexOf('{');
-    if (startIndex === -1) return null;
+function salvageJson(str) {
+    let repairedStr = str.trim();
 
-    let jsonStr = text.substring(startIndex);
-
-    // Clean up common trailing garbage that breaks parsing
-    jsonStr = jsonStr.replace(/,\s*$/, ''); // Remove trailing comma
+    // Fix a dangling key at the end (e.g., ..., "coreState":)
+    repairedStr = repairedStr.replace(/,\s*("[^"]*"\s*:\s*)$/, '');
+    if (!repairedStr.endsWith('}')) {
+       repairedStr = repairedStr.replace(/("[^"]*"\s*:\s*)$/, '');
+    }
 
     const stack = [];
     let inString = false;
-
-    for (let i = 0; i < jsonStr.length; i++) {
-        const char = jsonStr[i];
-
-        if (char === '"' && (i === 0 || jsonStr[i - 1] !== '\\')) {
-            inString = !inString;
-            continue;
-        }
-
+    for (let i = 0; i < repairedStr.length; i++) {
+        const char = repairedStr[i];
+        if (char === '"' && (i === 0 || repairedStr[i - 1] !== '\\')) inString = !inString;
         if (inString) continue;
-
+        
         switch (char) {
-            case '{':
-            case '[':
-                stack.push(char);
-                break;
-            case '}':
-                if (stack.length > 0 && stack[stack.length - 1] === '{') {
-                    stack.pop();
-                }
-                break;
-            case ']':
-                if (stack.length > 0 && stack[stack.length - 1] === '[') {
-                    stack.pop();
-                }
-                break;
+            case '{': case '[': stack.push(char); break;
+            case '}': if (stack.length > 0 && stack[stack.length - 1] === '{') stack.pop(); break;
+            case ']': if (stack.length > 0 && stack[stack.length - 1] === '[') stack.pop(); break;
         }
     }
 
-    // Close any remaining open structures
+    if (inString) repairedStr += '"';
     while (stack.length > 0) {
         const openChar = stack.pop();
-        if (openChar === '{') jsonStr += '}';
-        else if (openChar === '[') jsonStr += ']';
+        repairedStr = repairedStr.trim();
+        if (repairedStr.endsWith(',')) repairedStr = repairedStr.slice(0, -1);
+        if (openChar === '{') repairedStr += '}';
+        else if (openChar === '[') repairedStr += ']';
     }
-
-    // Final check: If it still ends with an unclosed string, add a quote.
-    if ((jsonStr.match(/"/g) || []).length % 2 !== 0) {
-        jsonStr += '"';
-    }
-    // If the last non-whitespace char is a comma inside an object, close the object.
-    if (jsonStr.trim().endsWith(',')) {
-        jsonStr = jsonStr.trim().slice(0, -1) + '}';
-    }
-
 
     try {
-        return JSON.parse(jsonStr);
+        return JSON.parse(repairedStr);
     } catch (e) {
-        console.error("Parser(Salvage): Final attempt to repair and parse failed.", e);
-        return null; // Salvage failed
+        console.error("Final salvage attempt failed. Returning empty object.", { original: str, repaired: repairedStr, error: e });
+        return {};
     }
+}
+
+
+/**
+ * Helper function to create a default result object for clarity.
+ * @param {string} mainText - The text to display as the main content.
+ * @returns {object} A structured object with default values.
+ */
+function createDefaultResult(mainText) {
+    return {
+        mainText: mainText,
+        options: {},
+        coreState: {}
+    };
 }
