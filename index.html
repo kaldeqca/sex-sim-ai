@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title data-lang="headerTitle">Sex Simulator v1</title>
+    <title data-lang="headerTitle">Sex Sim AI</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -17,39 +17,39 @@
     />
   </head>
   <body>
-    <!-- Top-left controls -->
-    <div class="top-left-controls">
-      <div id="lang-switcher">
-        <button data-lang-code="en">EN</button>
-        <button data-lang-code="cn">中文</button>
-        <button data-lang-code="ja">日本語</button>
+    <!-- Controls are now outside the container for a global position -->
+    <div class="top-controls-wrapper">
+      <div class="top-left-controls">
+        <div id="lang-switcher">
+          <button data-lang-code="en">EN</button>
+          <button data-lang-code="cn">中文</button>
+          <button data-lang-code="ja">日本語</button>
+        </div>
+        <button id="credits-btn" title="Credits">
+          <i class="fas fa-copyright"></i>
+        </button>
       </div>
-      <button id="credits-btn" title="Credits">
-        <i class="fas fa-copyright"></i>
-      </button>
-    </div>
-
-    <!-- Top-right controls -->
-    <div class="top-right-controls">
-      <button id="theme-switcher"><i class="fas fa-moon"></i></button>
-      <div id="color-picker-container">
-        <label for="theme-color-button" data-lang="themeColorLabel"
-          >Theme</label
-        >
-        <div class="color-picker-wrapper">
-          <button id="theme-color-button">
-            <span id="theme-color-preview"></span>
-            <i class="fas fa-caret-down"></i>
-          </button>
-          <div id="color-palette-popup" class="hidden">
-            <div id="color-palette"></div>
+      <div class="top-right-controls">
+        <button id="theme-switcher"><i class="fas fa-moon"></i></button>
+        <div id="color-picker-container">
+          <label for="theme-color-button" data-lang="themeColorLabel"
+            >Theme</label
+          >
+          <div class="color-picker-wrapper">
+            <button id="theme-color-button">
+              <span id="theme-color-preview"></span>
+              <i class="fas fa-caret-down"></i>
+            </button>
+            <div id="color-palette-popup" class="hidden">
+              <div id="color-palette"></div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
     <div class="container">
-      <header><h1 data-lang="headerTitle">Sex Simulator v1</h1></header>
+      <header><h1 data-lang="headerTitle">Sex Sim AI</h1></header>
 
       <main id="setup-section">
         <div class="api-settings">
@@ -67,24 +67,40 @@
             <select id="model-select"></select>
           </div>
         </div>
-
         <div id="mode-switcher">
-            <div id="mode-slider"></div>
-            <div class="mode-option active" data-mode="classic">
-                <h3 data-lang="classicModeTitle">Classic</h3>
-                <p data-lang="classicModeDesc">A pure erotic sandbox...</p>
-            </div>
-            <div class="mode-option" data-mode="realistic">
-                <h3 data-lang="realisticModeTitle">Realistic</h3>
-                <p data-lang="realisticModeDesc">A dynamic roleplay...</p>
-            </div>
+          <div id="mode-slider"></div>
+          <div class="mode-option active" data-mode="classic">
+            <h3 data-lang="classicModeTitle">Classic</h3>
+            <p data-lang="classicModeDesc">A pure erotic sandbox...</p>
+          </div>
+          <div class="mode-option" data-mode="realistic">
+            <h3 data-lang="realisticModeTitle">Realistic</h3>
+            <p data-lang="realisticModeDesc">A dynamic roleplay...</p>
+          </div>
         </div>
+
+        <!-- NEW CARD MANAGEMENT BUTTONS -->
+        <div class="card-management-buttons">
+            <button id="save-card-btn">
+                <i class="fas fa-save"></i> 
+                <span data-lang="saveCardButton">Save Card</span>
+            </button>
+            <button id="load-card-btn">
+                <i class="fas fa-upload"></i>
+                <span data-lang="loadCardButton">Load Card</span>
+            </button>
+        </div>
+        <input type="file" id="load-card-input" class="hidden" accept="image/png" />
 
         <label id="image-uploader" for="image-file-input">
           <p data-lang="imageDropText">Drag & Drop or Paste (Ctrl+V) Image</p>
         </label>
-        <input type="file" id="image-file-input" class="hidden" accept="image/*" />
-        
+        <input
+          type="file"
+          id="image-file-input"
+          class="hidden"
+          accept="image/*"
+        />
         <div class="character-inputs">
           <div class="input-group">
             <label for="char-name" data-lang="nameLabel">Name</label>
@@ -133,66 +149,42 @@
             </div>
           </div>
         </div>
-        
         <div id="advanced-options" class="hidden">
-            <button id="advanced-options-toggle">
-                <span data-lang="advancedOptionsLabel">Advanced Realistic Options</span>
-                <i class="fas fa-chevron-down"></i>
-            </button>
-            <div id="advanced-options-content" class="hidden">
-                <div class="toggle-option">
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="show-stats-toggle">
-                        <span class="toggle-slider"></span>
-                    </label>
-                    <div class="toggle-description">
-                        <h4 data-lang="showStatesLabel">Show State Meters</h4>
-                        <p data-lang="showStatesDesc">Display the character's core states...</p>
-                    </div>
-                </div>
-                <div class="toggle-option">
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="show-reasoning-toggle">
-                        <span class="toggle-slider"></span>
-                    </label>
-                    <div class="toggle-description">
-                        <h4 data-lang="showReasoningLabel">Show AI Reasoning</h4>
-                        <p data-lang="showReasoningDesc">Include a breakdown...</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <button id="start-btn" data-lang="startButton">Begin</button>
-      </main>
-
-      <section id="interaction-section" class="hidden">
-        <button id="back-to-setup-btn" title="Back to Setup">
-          <i class="fas fa-arrow-left"></i>
-        </button>
-        <div id="game-char-display">
-          <h3 data-lang="gameCharacterLabel">Who You Are Fucking Today</h3>
-          <img id="game-char-image" src="" alt="Character Image" />
-        </div>
-        <div id="response-container">
-          <div id="response-box"></div>
-          <button id="retry-btn" class="hidden" data-lang="retryButton">
-            Retry
+          <button id="advanced-options-toggle">
+            <span data-lang="advancedOptionsLabel"
+              >Advanced Realistic Options</span
+            >
+            <i class="fas fa-chevron-down"></i>
           </button>
-          <div id="options-container"></div>
-          <div id="custom-input-container">
-            <input
-              type="text"
-              id="custom-option-input"
-              data-lang-placeholder="customOptionPlaceholder"
-            />
-            <button id="submit-custom-option" data-lang="submitButton">
-              Send
-            </button>
+          <div id="advanced-options-content" class="hidden">
+            <div class="toggle-option">
+              <label class="toggle-switch">
+                <input type="checkbox" id="show-stats-toggle" />
+                <span class="toggle-slider"></span>
+              </label>
+              <div class="toggle-description">
+                <h4 data-lang="showStatesLabel">Show State Meters</h4>
+                <p data-lang="showStatesDesc">
+                  Display the character's core states...
+                </p>
+              </div>
+            </div>
+            <div class="toggle-option">
+              <label class="toggle-switch">
+                <input type="checkbox" id="show-reasoning-toggle" />
+                <span class="toggle-slider"></span>
+              </label>
+              <div class="toggle-description">
+                <h4 data-lang="showReasoningLabel">Show AI Reasoning</h4>
+                <p data-lang="showReasoningDesc">
+                  Include a breakdown...
+                </p>
+              </div>
+            </div>
           </div>
         </div>
-        <div id="stats-display-container" class="hidden"></div>
-      </section>
+        <button id="start-btn" data-lang="startButton">Begin</button>
+      </main>
     </div>
 
     <script type="module" src="script.js"></script>
