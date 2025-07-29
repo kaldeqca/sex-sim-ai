@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title data-lang="headerTitle">Sex Sim AI</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Roboto:wght@300;400&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Controls are now outside the container for a global position -->
+    <div class="top-controls-wrapper">
+      <div class="top-left-controls">
+        <div id="lang-switcher">
+          <button data-lang-code="en">EN</button>
+          <button data-lang-code="cn">中文</button>
+          <button data-lang-code="ja">日本語</button>
+        </div>
+        <button id="credits-btn" title="Credits">
+          <i class="fas fa-copyright"></i>
+        </button>
+      </div>
+      <div class="top-right-controls">
+        <button id="theme-switcher"><i class="fas fa-moon"></i></button>
+        <div id="color-picker-container">
+          <label for="theme-color-button" data-lang="themeColorLabel"
+            >Theme</label
+          >
+          <div class="color-picker-wrapper">
+            <button id="theme-color-button">
+              <span id="theme-color-preview"></span>
+              <i class="fas fa-caret-down"></i>
+            </button>
+            <div id="color-palette-popup" class="hidden">
+              <div id="color-palette"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <header><h1 data-lang="headerTitle">Sex Sim AI</h1></header>
+
+      <section id="interaction-section">
+        <button id="back-to-setup-btn" title="Back to Setup">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+
+        <div id="game-char-display" class="hidden">
+          <img id="game-char-image" src="" alt="Character Image" />
+        </div>
+
+        <div id="dialogue-history-container">
+          <!-- Messages will be appended here by script.js -->
+        </div>
+
+        <div id="action-area">
+          <div id="suggested-options-container">
+            <!-- Suggested options will be appended here -->
+          </div>
+          <div id="user-input-area">
+            <textarea
+              id="user-action-textarea"
+              rows="2"
+              data-lang-placeholder="customOptionPlaceholder"
+            ></textarea>
+            <div class="action-buttons">
+              <button id="send-action-btn" title="Send">
+                <i class="fas fa-paper-plane"></i>
+              </button>
+              <button id="edit-last-action-btn" title="Edit Last Action">
+                <i class="fas fa-pencil-alt"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script type="module" src="script.js"></script>
+  </body>
+</html>
