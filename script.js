@@ -1,6 +1,4 @@
 import { systemPrompts } from './config.js';
-// The default parser is no longer statically imported here.
-// We will import the correct one dynamically.
 import { saveCharacterCard, loadCharacterCard } from './cardManager.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -146,7 +144,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // SETUP PAGE LOGIC (index.html)
     // =================================================================
     function setupPageLogic() {
-        // ... (selectors remain the same)
         const apiKeyInput = document.getElementById('api-key');
         const modelSelect = document.getElementById('model-select');
         const imageUploader = document.getElementById('image-uploader');
@@ -173,7 +170,14 @@ document.addEventListener('DOMContentLoaded', () => {
         let characterImage = null;
         let currentMode = 'classic';
 
-        // ... (functions handleImageFile, validateAndGetData, startGame, populateFormFromSession are unchanged)
+        //Load API key from localStorage on initial load
+        function loadApiKeyFromStorage() {
+            const savedApiKey = localStorage.getItem('geminiApiKey');
+            if (savedApiKey) {
+                apiKeyInput.value = savedApiKey;
+            }
+        }
+        
         function handleImageFile(file) {
             if (file && file.type.startsWith('image/')) {
                 if (file.size > MAX_IMAGE_SIZE_BYTES) {
@@ -231,6 +235,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 { currentMode, characterImage }
             );
             if (!data) return;
+
+            //Explicitly save the API key to localStorage for persistence upon starting a game.
+            localStorage.setItem('geminiApiKey', data.apiKey);
+
             sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(data));
             window.location.href = 'game.html';
         }
@@ -317,9 +325,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     event.target.value = null;
                 });
         }
-
-        // ... (Event listeners are unchanged)
+        
         [apiKeyInput, charNameInput, personalityInput, charAgeInput].forEach(input => input.addEventListener('input', () => input.style.borderColor = ''));
+        
+        apiKeyInput.addEventListener('blur', () => {
+            if (apiKeyInput.value.trim()) {
+                localStorage.setItem('geminiApiKey', apiKeyInput.value.trim());
+            }
+        });
+
         modeSwitcher.addEventListener('click', (e) => {
             const selectedOption = e.target.closest('.mode-option');
             if (!selectedOption || selectedOption.dataset.mode === currentMode) return;
@@ -350,7 +364,9 @@ document.addEventListener('DOMContentLoaded', () => {
         loadCardBtn.addEventListener('click', () => loadCardInput.click());
         loadCardInput.addEventListener('change', handleLoadCard);
 
-        populateFormFromSession();
+        // Run initialization functions
+        loadApiKeyFromStorage(); // Load persistent key first
+        populateFormFromSession(); // Then load session data, which may override the key for the current session
     }
 
 
@@ -374,7 +390,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const { parseAdvancedJSON } = parserModule;
 
-        // ... (selectors remain the same)
+
         const backToSetupBtn = document.getElementById('back-to-setup-btn');
         const gameCharDisplay = document.getElementById('game-char-display');
         const gameCharImage = document.getElementById('game-char-image');
@@ -391,7 +407,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         gameSessionData = JSON.parse(savedDataJSON);
 
-        // ... (All other functions in gamePageLogic remain unchanged from the previous correct version)
         function setupGameUI() {
             if (gameSessionData.characterImage) {
                 gameCharImage.src = `data:${gameSessionData.characterImage.mimeType};base64,${gameSessionData.characterImage.data}`;
